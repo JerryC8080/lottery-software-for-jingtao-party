@@ -1,0 +1,252 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>数字摇奖(老虎机)</title>
+<script type="text/javascript" src="js/jquery-1.7.2-min.js"></script>
+<script type="text/javascript" src="js/easing.js"></script>
+<style>
+
+body{background:url(images/body_bg.jpg) 0px 0px repeat-x #000;}
+
+.main_bg{
+	background:url(images/main_bg.jpg) top center no-repeat;
+}
+.main{
+	width:1070px;
+	height:600px;
+	position:relative;
+	margin:0 auto;
+	top: 150px
+}
+.num_box{
+	height:100%;
+	width:100%;
+	position:absolute;
+	z-index:8;
+	text-align:center;
+}
+.num_group{
+	background:url(images/num_group_bg.jpg) top left no-repeat;
+}
+.num{
+	background:url(images/num_little.png) top center repeat-y;
+	width:53px;
+	height:90px;
+	float:left;
+	margin-right:6px;
+}
+.btn{
+	background:url(images/btn_start.png) 0px 0px no-repeat;
+	width:264px;
+	height:89px;
+	position:absolute;
+	left:50%;
+	bottom:50px;
+	margin-left:-132px;
+	cursor:pointer;
+	clear:both;
+}
+</style>
+</head>
+<body>
+<div class="main_bg">
+  <div class="main">
+    <div class="num_box">
+   	  <!-- 第一行 -->
+   	  <div class="num_line">
+	      <div class="num_group"> 
+		  　<div class="num"></div>
+		  　<div class="num"></div>
+		  　<div class="num"></div>
+	      </div>
+	      <div class="num_group"> 
+		  　<div class="num"></div>
+		  　<div class="num"></div>
+		  　<div class="num"></div>
+	      </div>
+	      <div class="num_group"> 
+		  　<div class="num"></div>
+		  　<div class="num"></div>
+		  　<div class="num"></div>
+	      </div>
+	      <div class="num_group"> 
+		  　<div class="num"></div>
+		  　<div class="num"></div>
+		  　<div class="num"></div>
+	      </div>
+	      <div class="num_group"> 
+		  　<div class="num"></div>
+		  　<div class="num"></div>
+		  　<div class="num"></div>
+	      </div>
+      </div>
+
+      <!-- 第二行 -->
+   	  <div class="num_line">
+	      <div class="num_group"> 
+		  　<div class="num"></div>
+		  　<div class="num"></div>
+		  　<div class="num"></div>
+	      </div>
+	      <div class="num_group"> 
+		  　<div class="num"></div>
+		  　<div class="num"></div>
+		  　<div class="num"></div>
+	      </div>
+	      <div class="num_group"> 
+		  　<div class="num"></div>
+		  　<div class="num"></div>
+		  　<div class="num"></div>
+	      </div>
+	      <div class="num_group"> 
+		  　<div class="num"></div>
+		  　<div class="num"></div>
+		  　<div class="num"></div>
+	      </div>
+	      <div class="num_group"> 
+		  　<div class="num"></div>
+		  　<div class="num"></div>
+		  　<div class="num"></div>
+	      </div>
+      </div>
+
+      <!-- 第三行 -->
+      <div class="num_line">
+	      <div class="num_group"> 
+		  　<div class="num"></div>
+		  　<div class="num"></div>
+		  　<div class="num"></div>
+	      </div>
+	      <div class="num_group"> 
+		  　<div class="num"></div>
+		  　<div class="num"></div>
+		  　<div class="num"></div>
+	      </div>
+	      <div class="num_group"> 
+		  　<div class="num"></div>
+		  　<div class="num"></div>
+		  　<div class="num"></div>
+	      </div>
+	      <div class="num_group"> 
+		  　<div class="num"></div>
+		  　<div class="num"></div>
+		  　<div class="num"></div>
+	      </div>
+	      <div class="num_group"> 
+		  　<div class="num"></div>
+		  　<div class="num"></div>
+		  　<div class="num"></div>
+	      </div>
+      </div>
+
+      <div class="btn"></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
+<script>
+//### 全局变量
+window.upperLimit = 300; //上限
+window.lowerLimit = 1;	//下限
+var isBegin = false;
+var u = 87.5;
+var numCollection = {}
+
+//### 预设可调参数
+//	数字上下线、数字滚动速度、是否多次滚动不允许重复数字
+
+function numRand() {
+	var x = window.upperLimit; //上限
+	var y = window.lowerLimit; //下限
+	var num = parseInt(Math.random() * (x - y + 1) + y);
+	return num;
+}
+
+function numToStr(result){
+	var num_arr;
+	if(result<10){
+		num_arr = ('00'+result).split('');
+	}else if(result<100){
+		num_arr = ('0'+result).split('');
+	}else{
+		num_arr = (result+'').split('');
+	}
+	return num_arr.toString().replace(/,/g,'');
+}
+
+function excuteNumAnimate(_this , num_arr){
+	_this.find(".num").each(function(index){
+		var _num = $(this);
+		setTimeout(function(){
+			_num.animate({ 
+				backgroundPositionY: (u*60) - (u*num_arr[index])
+			},{
+				duration: 7000,
+				easing: "easeInOutCirc",
+				complete: function(){
+					if(index==2) isBegin = false;
+				}
+			});
+		}, index * 300);
+	});
+}
+
+function numCollectionIsFull(){
+	return Object.keys(numCollection).length == (window.upperLimit - window.lowerLimit + 1);
+}
+
+function initNumGroupStyle(){
+	$('.num_line').each(function(numGroupIndex){
+		$(this).find('.num_group').each(function(numIndex){
+			$(this).css({
+				position:'absolute',
+				top:(90+40)*numGroupIndex,
+				left:numIndex*210
+			});
+		});
+	});
+}
+
+function inputLimit(){
+	var upperLimit = parseInt(prompt('输入上限值（<=999）','300'));
+	if(upperLimit >=1000 ) {
+		upperLimit = parseInt(prompt('上限值输入有误，请重新输入:(<=999)','300'));
+	}
+
+	var lowerLimit = parseInt(prompt('输入下限值（>=1）','1'));
+	if(lowerLimit <1 ){
+		upperLimit = parseInt(prompt('下限值输入有误，请重新输入:(>=1)','1'));
+	}
+
+	window.upperLimit = upperLimit;
+	window.lowerLimit = lowerLimit;
+}
+
+$(function(){	
+	inputLimit();
+	initNumGroupStyle();
+	$('.btn').click(function(){
+		if(isBegin) return false;
+		isBegin = true;
+
+		$(".num_group").each(function(index){
+			_this = $(this);
+			_this.find(".num").css('backgroundPositionY',0);
+			var result = numRand();
+			var num_arr = numToStr(result);
+			while(numCollection[num_arr]){
+				if(numCollectionIsFull) break;
+				console.log('重复了，重新获取随机数');
+				result = numRand();
+				num_arr = numToStr(result);
+			}
+			numCollection[num_arr] = result;
+			console.log(numCollection);
+			//	执行动画效果
+			excuteNumAnimate(_this , num_arr);
+		});	
+	});	
+});
+</script>
